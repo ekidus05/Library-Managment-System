@@ -60,6 +60,4 @@ def get_book(book_id:int, db:Session = Depends(get_db), current_user = Depends(o
     return book
 
 
-#update and delete
 
-#borrow the book and returning the books
