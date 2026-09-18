@@ -22,36 +22,36 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     """Upgrade schema."""
-    with op.batch_alter_table("books") as batch_op:
-        # Move all add/drop operations INSIDE the batch block
-        batch_op.add_column(sa.Column('author_id', sa.Integer(), nullable=True))
-        batch_op.add_column(sa.Column('category_id', sa.Integer(), nullable=True))
-        batch_op.drop_column('author')
+    # with op.batch_alter_table("books") as batch_op:
+    #     # Move all add/drop operations INSIDE the batch block
+    #     batch_op.add_column(sa.Column('author_id', sa.Integer(), nullable=True))
+    #     batch_op.add_column(sa.Column('category_id', sa.Integer(), nullable=True))
+    #     batch_op.drop_column('author')
         
-        batch_op.create_foreign_key(
-            "fk_books_author",
-            "authors",
-            ['author_id'], 
-            ['id']
-        )
-        batch_op.create_foreign_key(
-            "fk_books_category",
-            "categories",
-            ['category_id'], 
-            ['id']
-        )
+    #     batch_op.create_foreign_key(
+    #         "fk_books_author",
+    #         "authors",
+    #         ['author_id'], 
+    #         ['id']
+    #     )
+    #     batch_op.create_foreign_key(
+    #         "fk_books_category",
+    #         "categories",
+    #         ['category_id'], 
+    #         ['id']
+    #     )
 
 def downgrade() -> None:
     """Downgrade schema."""
-    with op.batch_alter_table("books") as batch_op:
-        batch_op.add_column(sa.Column('author', sa.VARCHAR(), nullable=True))
+    # with op.batch_alter_table("books") as batch_op:
+    #     batch_op.add_column(sa.Column('author', sa.VARCHAR(), nullable=True))
         
-        # Name the constraints explicitly so they can be dropped properly
-        batch_op.drop_constraint('fk_books_author', type_='foreignkey')
-        batch_op.drop_constraint('fk_books_category', type_='foreignkey')
+    #     # Name the constraints explicitly so they can be dropped properly
+    #     batch_op.drop_constraint('fk_books_author', type_='foreignkey')
+    #     batch_op.drop_constraint('fk_books_category', type_='foreignkey')
         
-        batch_op.drop_column('category_id')
-        batch_op.drop_column('author_id')
+    #     batch_op.drop_column('category_id')
+    #     batch_op.drop_column('author_id')
 
 
 
