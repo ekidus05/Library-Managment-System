@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from enum import Enum
 
 class AuthorShort(BaseModel):
     id:int
@@ -44,15 +45,25 @@ class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
+
+class UserRole(str, Enum):
+    admin = "admin"
+    librarian = "librarian"
+    member = "member"
+
 #blueprint for fast api to send back to the user
 class UserResponse(BaseModel):
     id:int
     username:str
     email:EmailStr
-    role: str
+    role: UserRole
 
     class Config:
         from_attributes = True
+
+
+class UserRoleUpdate(BaseModel):
+    role : UserRole
 
 
 #used to show the token in fast api server
@@ -120,5 +131,9 @@ class BorrowingWithBook(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+
+
 
     
