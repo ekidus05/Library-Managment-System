@@ -16,13 +16,13 @@ def get_books(db:Session = Depends(get_db),current_user = Depends(oauth2.get_cur
     return books
 
 @router.delete("/{book_id}")
-def delete_book(book_id:int,current_user = Depends(oauth2.require_roles(["admin","librarian"]))):
+def delete_book(book_id:int,current_user = Depends(oauth2.require_librarian)):
     return{
         "message": "Book deleted"
     }
 
 @router.post("/",response_model=schemas.BookResponse)
-def create_book(book:schemas.BookCreate,db:Session = Depends(get_db),current_user = Depends(oauth2.get_current_user)):
+def create_book(book:schemas.BookCreate,db:Session = Depends(get_db),current_user = Depends(oauth2.require_librarian)):
    author  = db.query(models.Author).filter(models.Author.id==book.author_id).first()
 
    if author is None:
@@ -41,8 +41,8 @@ def create_book(book:schemas.BookCreate,db:Session = Depends(get_db),current_use
    db.refresh(new_book)
    return new_book
 
-@router.post("/book_{id}/borrow")
-def borrow_book(book_id:int,current_user = Depends(oauth2.require_roles)):
+@router.post("/{book_id}/borrow")
+def borrow_book(book_id:int,current_user = Depends(oauth2.require_member)):
     return{
         "message": f"Book{book_id} borrowed",
         "borrowed_by": current_user.username
@@ -51,7 +51,7 @@ def borrow_book(book_id:int,current_user = Depends(oauth2.require_roles)):
 
 @router.get("/{book_id}", response_model=schemas.BookResponse)
 def get_book(book_id:int, db:Session = Depends(get_db), current_user = Depends(oauth2.get_current_user)):
-    book = db.query(models.Author).filter(models.Book.id==book_id).first()
+    book = db.query(models.Book).filter(models.Book.id==book_id).first()
 
     if book is None:
         raise HTTPException(status_code=404, detail = "Author not found")
